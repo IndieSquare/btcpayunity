@@ -29,7 +29,7 @@ public class BTCPayUnity : MonoBehaviour {
     public void createInvoice()
     {
 
-        //New Invoice Prep 
+        //New Invoice Preparation
         string curr = cmbCurrency.options[cmbCurrency.value].text;
         Invoice invoice = new Invoice(double.Parse(amount.text), curr);
         invoice.BuyerEmail = email;
@@ -38,123 +38,35 @@ public class BTCPayUnity : MonoBehaviour {
         invoice.PosData = "POST DATA POS DATA";
         invoice.ItemDesc = product.text;
 
-        //Create Invoice 
+        //Create Invoice with initial data and get the full invoice
         invoice = btcpay.createInvoice(invoice, "merchant");
-
         Debug.Log("Invoice Created:" + invoice.Id);
         Debug.Log("Invoice Url:" + invoice.Url);
-
-        //Open BTCPay site with WR
-        //        Application.OpenURL(invoice.Url);
-        //Websocketes to wait for payment event
-        //subscribeInvoice(invoice.Id);
-        //        StartCoroutine(subscribeInvoice(invoice.Id, Debug.Log));
-
+        //Lightning BOLT invoice string
         List<InvoiceCryptoInfo> cryptoInfoList = invoice.CryptoInfo;
-        Texture2D texs = generateQR(cryptoInfoList[0].paymentUrls.BOLT11);
-        QRcode.GetComponent<Image>().sprite = Sprite.Create(texs, new Rect(0.0f, 0.0f, texs.width, texs.height), new Vector2(0.5f, 0.5f), 100.0f);
-        StartCoroutine(subscribeInvoice(invoice.Id, printInvoice));
 
+        //Generate QR code image
+        Texture2D texs = btcpay.generateQR(cryptoInfoList[0].paymentUrls.BOLT11);
+        //Set the QR code iamge to image Gameobject
+        QRcode.GetComponent<Image>().sprite = Sprite.Create(texs, new Rect(0.0f, 0.0f, texs.width, texs.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+        //Subscribe the callback method with invoice ID to be monitored
+        StartCoroutine(btcpay.subscribeInvoice(invoice.Id, printInvoice,this));
     }
 
+    //Callback method when payment is executed.
     public void printInvoice(Invoice invoice)
     {
-        //
-        QRcode.GetComponent<Image>().sprite = Resources.Load<Sprite>("image/paid");
-    }
-
-
-    public Invoice getInvoice(string invoiceId)
-    {
-        //Get Invoice 
-        Invoice inv = btcpay.getInvoice(invoiceId, BTCPay.FACADE_MERCHANT);
-        Debug.Log("Invoice Created:" + inv.Id);
-        Debug.Log("Invoice Url:" + inv.Url);
-        return inv;
-    }
-
-    public IEnumerator subscribeInvoice(string invoiceId, Action<Invoice> actionOnInvoice)
-    {
-        //Get Invoice 
-        //Task<Invoice> t = btcpay.GetInvoiceAsync(invoiceId);
-        //t.Wait();
-        //Invoice inv = t.Result;
-        //        Debug.Log("Invoice Status:" + inv.Status);
-
-//        StartCoroutine(SubscribeInvoiceCoroutine(invoiceId));
-
-        CoroutineWithData cd = new CoroutineWithData(this, SubscribeInvoiceCoroutine(invoiceId));
-        yield return cd.coroutine;
-
-        Debug.Log("result is " + cd.result);
-
-        Invoice resultInv = (Invoice)cd.result;
-        actionOnInvoice(resultInv);
-    }
-
-    public IEnumerator SubscribeInvoiceCoroutine(string invoiceId)
-    {
-        Invoice inv = null;
-        string _serverHost = "btcpayreg.indiesquare.net";
-        //WebSocket  loop
-        using (var ws = new WebSocket("wss://" + _serverHost + "/i/" + invoiceId + "/status/ws"))
+        //Hide QR code image to Paied Image file
+        if (invoice.Status == "complete")
         {
-            ws.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-            ws.OnMessage += (sender, e) =>
-            {
-                Debug.Log("WS Message: " + e.Data);
-                //Get Invoice 
-//                inv = getInvoice(invoiceId, BTCPay.FACADE_MERCHANT);
-                inv = getInvoice(invoiceId);
-                Debug.Log("Got invoice : " + inv.Status);
-                ws.Close();
-            };
-            ws.OnClose += (sender, e) =>
-            {
-                //Console.WriteLine("WS Closed: " + e.Code);
-            };
-            ws.OnError += (sender, e) =>
-            {
-                //Console.WriteLine("WS Err: " + e.Exception);
-            };
-            ws.OnOpen += (sender, e) =>
-              Debug.Log("WS Opened.");
-
-            ws.Connect();
-
-            //Wait connection is closed when invoice is gotten or exception
-            while (ws.IsAlive)
-            {
-                //Thread.Sleep(500);
-                yield return new WaitForSeconds(0.5f);
-                Debug.Log("Sleep 500ms.");
-            }
-        }//Close websocket
-        yield return inv;
-    }
-
-    private static Color32[] Encode(string textForEncoding,
-      int width, int height)
-    {
-        var writer = new BarcodeWriter
+            QRcode.GetComponent<Image>().sprite = Resources.Load<Sprite>("image/paid");
+            Debug.Log("payment is complete");
+        }else
         {
-            Format = BarcodeFormat.QR_CODE,
-            Options = new QrCodeEncodingOptions
-            {
-                Height = height,
-                Width = width
-            }
-        };
-        return writer.Write(textForEncoding);
-    }
-    public Texture2D generateQR(string text)
-    {
-        var encoded = new Texture2D(384, 384);
-        var color32 = Encode(text, encoded.width, encoded.height);
-        encoded.SetPixels32(color32);
-        encoded.Apply();
-        return encoded;
-    }
+//            StartCoroutine(btcpay.subscribeInvoice(invoice.Id, printInvoice, this));
+            Debug.Log("payment is not completed:" + invoice.Status);
+        }
 
-
+    }
 }
