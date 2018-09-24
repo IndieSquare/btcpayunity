@@ -56,7 +56,7 @@ invoice.ItemDesc = "Super Power Star"
 
 ## Sample Code
 以下のサンプルコードは、空のゲームオブジェクトにつけることができます。
-``` C#
+```C#
 using System.Collections;
 using System.Collections.Generic;
 using System;

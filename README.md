@@ -1,5 +1,7 @@
 BTCPay Unity Client
 ======
+Read this in other languages: [English](README.md), [日本語](README.ja.md)
+
 
 ## How to use BTCpay Server Unity Client
 
@@ -30,11 +32,11 @@ BTCpay client has dependencies listed below. You should have those managed dll i
 
 ## Classes and Methods
 
-### BtcPay class
-`new BTCPay(String paringCode, String BTCPayServerHost)`  
-BTCPay class has a constructor.  
+### BTCPayClient class
+`new BTCPayClient(String paringCode, String BTCPayServerHost)`  
+BTCPayClient class has a constructor.  
 
-`Invoice BTCPay.createInvoice(Invoice invoice, String facade)`  
+`Invoice createInvoice(Invoice invoice, String facade)`  
 Submit and register an Invoice to BTCPay server. Response is an Invoice filled with Payment destination information. e.g. BOLT invoice String.
 
 `void subscribeInvoice(String invoiceId, Action<Invoice> callbackWithInvoice,GameObject gameObject)`  
@@ -54,7 +56,7 @@ invoice.ItemDesc = "Super Power Star"
 ## Sample Code
 This script is attached to empty object in the hierachy.
 
-``` C#
+```C#
 using System.Collections;
 using System.Collections.Generic;
 using System;
