@@ -1,4 +1,61 @@
-﻿using System.Collections;
+BTCPay Unity Client
+======
+
+## How to use BTCpay Server Unity Client
+
+This is the BTCpay server client for Unity.
+There are 2 main classes. One is BTCPayClient class and
+the other is Invoice class.
+
+First, you instantiate BTCPayClient class,by passing paring code from BTCPay server (Server Initiated Paring).
+
+Then you create an Invoice object and fill it by the information of the item, product or service you are selling, and customer information.
+
+Then submit the invoice to BTCPay server. In turn , it responses back an Invoice object filled with invoiceID, status, payment destination information.
+
+Then, you can subscribe to a specific invoice by passing callback function to do whatever you want to do when payment is complete.
+
+## Dependency
+BTCpay client has dependencies listed below. You should have those managed dll in hand.
+* BitCoinSharp
+* BouncyCastle.Crypto
+* Newtonsoft.Json
+* websocket-sharp
+* zxing.unity
+
+## How to generate paring code.
+1. Login to BTCPay server as admin role.
+2. Go to Store=>Access Token=>Create a new token. without Public key.
+3. Copy the server-initiated paring code from popup
+
+## Classes and Methods
+
+### BtcPay class
+`new BTCPay(String paringCode, String BTCPayServerHost)`  
+BTCPay class has a constructor.  
+
+`Invoice BTCPay.createInvoice(Invoice invoice, String facade)`  
+Submit and register an Invoice to BTCPay server. Response is an Invoice filled with Payment destination information. e.g. BOLT invoice String.
+
+`void subscribeInvoice(String invoiceId, Action<Invoice> callbackWithInvoice,GameObject gameObject)`  
+Subscribe to an invoice with callback method that takes Invoice as a parameter.
+
+### Invoice class
+
+` new Invoice(double price,String currency)`  
+
+Additionally, you can set several properties.  
+https://bitpay.com/docs/create-invoice
+
+invoice.BuyerEmail = jon.doe@g.com  
+invoice.NotificationEmail = jon.doe@g.com  
+invoice.ItemDesc = "Super Power Star"
+
+## Sample Code
+This script is attached to empty object in the hierachy.
+
+``` C#
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -82,3 +139,4 @@ public class BTCPayUnity : MonoBehaviour {
 
     }
 }
+```

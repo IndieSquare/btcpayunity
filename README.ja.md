@@ -1,4 +1,63 @@
-﻿using System.Collections;
+BTCPay Unity クライアント
+======
+
+Read this in other languages: [English](README.md), [日本語](README.ja.md)
+
+## BTCpayサーバー Unity クライアントの使用方法
+
+このライブラリーは、Unity用のBtcPay Server クライアントです。
+メインの2つのクラスがあり、１つがBTCPayClientクラスで、もう一つが、Invoiceクラスです。
+
+最初に、 BTCPayClientクラスを、コンストラクターでインスタンス化します。引数には、ペアリングコード（サーバー主導ペアリング）とBTCPay Serverのホスト名を渡します。
+
+次に、Invoiceオブジェクトをインスタンス化し、必須の価格と通貨を引数に渡します。そのたのオプションの商品情報やお客さんのメールアドレスもセット可能です。
+そして、クライアントを使用して、BTCPayサーバーへ登録すると、リスポンスとして 支払先情報をセットされたInvoiceオブジェクトがリスポンスとして返ってきます。
+
+必要であれば、その特定のInvoiceの状態の変化にサブスクライブし、コールバック関数を登録できます。
+
+## Dependency
+BTCpayクライアントは、以下ライブラリーに依存していますので、dllが必要です。
+
+* BitCoinSharp
+* BouncyCastle.Crypto
+* Newtonsoft.Json
+* websocket-sharp
+* zxing.unity
+
+## How to generate paring code.
+1. BTCPayサーバーに管理者でログインする。
+2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。
+3. ポップアップに ペアリングコードが、一時的にでるので、コピーしてコードで使用します。
+
+## Classes and Methods
+
+### BTCPayClient class
+`new BTCPayClient(String paringCode, String BTCPayServerHost)`  
+コンストラクター。引数にペアリングコードとBTCPAYサーバーのホストを渡します。
+
+`Invoice createInvoice(Invoice invoice, String facade)`  
+InvoiceオブジェクトをBTCPayサーバーに送信し、登録します。リスポンスとして、支払先情報等がアップデートされたInvoiceオブジェクトがもどります。たとえば、BOLTインボイス文字列が取得できます。
+
+`void subscribeInvoice(String invoiceId, Action<Invoice> callbackWithInvoice,GameObject gameObject)`  
+Invoiceを引数にとれるコールバック関数を、モニターするInvoiceのIDを渡し、コールーチンで実行します。
+３つめの引数は、Scriptを、貼り付けるUnityのゲームおジェクトを渡します。
+
+### Invoice class
+
+` new Invoice(double price,String currency)`  
+必須情報の価格と通貨で、コンストラクターを呼び出します。
+
+追加で、購入者のメールアドレスや購入アイテムの情報を渡すこともできます。そのたのプロパティは、リンクを参照。
+https://bitpay.com/docs/create-invoice
+
+invoice.BuyerEmail = jon.doe@g.com  
+invoice.NotificationEmail = jon.doe@g.com  
+invoice.ItemDesc = "Super Power Star"
+
+## Sample Code
+以下のサンプルコードは、空のゲームオブジェクトにつけることができます。
+``` C#
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -82,3 +141,4 @@ public class BTCPayUnity : MonoBehaviour {
 
     }
 }
+```
