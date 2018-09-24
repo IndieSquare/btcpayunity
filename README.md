@@ -56,7 +56,7 @@ invoice.ItemDesc = "Super Power Star"
 ## Sample Code
 This script is attached to empty object in the hierachy.
 
-```C#
+```csharp
 using System.Collections;
 using System.Collections.Generic;
 using System;
