@@ -5,17 +5,17 @@ Read this in other languages: [English](README.md), [日本語](README.ja.md)
 
 ## How to use BTCpay Server Unity Client
 
-This is the BTCpay server client for Unity.
+This is the BTCpay client for Unity.
 There are 2 main classes. One is BTCPayClient class and
 the other is Invoice class.
 
 First, you instantiate BTCPayClient class,by passing paring code from BTCPay server (Server Initiated Paring).
 
-Then you create an Invoice object and fill it by the information of the item, product or service you are selling, and customer information.
+Then you create an Invoice object and fill it with the information of the item, product or service you are selling, and customer information.
 
 Then submit the invoice to BTCPay server. In turn , it responses back an Invoice object filled with invoiceID, status, payment destination information.
 
-Then, you can subscribe to a specific invoice by passing callback function to do whatever you want to do when payment is complete.
+Then, you can subscribe to the invoice by passing callback function to do whatever you want to do when payment is complete.
 
 ## Dependency
 BTCpay client has dependencies listed below. You should have those managed dll in hand.
@@ -29,6 +29,11 @@ BTCpay client has dependencies listed below. You should have those managed dll i
 1. Login to BTCPay server as admin role.
 2. Go to Store=>Access Token=>Create a new token. without Public key.
 3. Copy the server-initiated paring code from popup
+
+## Default lnd daemon with BTCPay Server
+1. Login to BTCPay Server as admin role.
+2. Go to Stores=>Settings=>General Settings=>Lightning nodes=>Modify
+3. at Connecting string Click "click here",test and Submit
 
 ## Classes and Methods
 

@@ -5,7 +5,7 @@ Read this in other languages: [English](README.md), [日本語](README.ja.md)
 
 ## BTCpayサーバー Unity クライアントの使用方法
 
-このライブラリーは、Unity用のBtcPay Server クライアントです。
+このライブラリーは、Unity用のBtcPay クライアントです。
 メインの2つのクラスがあり、１つがBTCPayClientクラスで、もう一つが、Invoiceクラスです。
 
 最初に、 BTCPayClientクラスを、コンストラクターでインスタンス化します。引数には、ペアリングコード（サーバー主導ペアリング）とBTCPay Serverのホスト名を渡します。
@@ -15,7 +15,7 @@ Read this in other languages: [English](README.md), [日本語](README.ja.md)
 
 必要であれば、その特定のInvoiceの状態の変化にサブスクライブし、コールバック関数を登録できます。
 
-## Dependency
+## 依存ライブラリー
 BTCpayクライアントは、以下ライブラリーに依存していますので、dllが必要です。
 
 * BitCoinSharp
@@ -24,14 +24,19 @@ BTCpayクライアントは、以下ライブラリーに依存しています�
 * websocket-sharp
 * zxing.unity
 
-## How to generate paring code.
+## ペアリングコードの作成方法
 1. BTCPayサーバーに管理者でログインする。
 2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。
 3. ポップアップに ペアリングコードが、一時的にでるので、コピーしてコードで使用します。
 
-## Classes and Methods
+## デフォルトのlndをBTCPay serverに接続する
+1. BTCPayサーバーに管理者でログインする。
+2. 次の順番で、設定ページに移動します。Stores=>Settings=>General Settings=>Lightning nodes=>Modify
+3. Connecting string のところの "click here"をクリックし、接続のテストをして、設定を登録します。
 
-### BTCPayClient class
+## クラスとメソッド
+
+### BTCPayClient クラス
 `new BTCPayClient(String paringCode, String BTCPayServerHost)`  
 コンストラクター。引数にペアリングコードとBTCPAYサーバーのホストを渡します。
 
@@ -42,7 +47,7 @@ InvoiceオブジェクトをBTCPayサーバーに送信し、登録します。�
 Invoiceを引数にとれるコールバック関数を、モニターするInvoiceのIDを渡し、コールーチンで実行します。
 ３つめの引数は、Scriptを、貼り付けるUnityのゲームおジェクトを渡します。
 
-### Invoice class
+### Invoice クラス
 
 ` new Invoice(double price,String currency)`  
 必須情報の価格と通貨で、コンストラクターを呼び出します。
@@ -54,7 +59,7 @@ invoice.BuyerEmail = jon.doe@g.com
 invoice.NotificationEmail = jon.doe@g.com  
 invoice.ItemDesc = "Super Power Star"
 
-## Sample Code
+## サンプル
 以下のサンプルコードは、空のゲームオブジェクトにつけることができます。
 ```csharp
 using System.Collections;
