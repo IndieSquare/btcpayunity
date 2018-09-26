@@ -87,9 +87,9 @@ public class BTCPayUnity : MonoBehaviour {
 
     void Start()
     {
-        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードをセット
+        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードとホスト名をセット
         //秘密鍵ファイルがワーキングディレクトリに作成され、公開鍵がBTCPayServerに登録される。
-        btcPayClient = new BTCPayClient(pairCode);
+        btcPayClient = new BTCPayClient(pairCode,"btcpaytest2.indiesquare.net");
     }
 
     public void createInvoice()

@@ -9,7 +9,7 @@ This is the BTCpay client for Unity.
 There are 2 main classes. One is BTCPayClient class and
 the other is Invoice class.
 
-First, you instantiate BTCPayClient class,by passing paring code from BTCPay server (Server Initiated Paring).
+First, you instantiate BTCPayClient class,by passing paring code from BTCPay server (Server Initiated Paring) and hostname of BTCPay server.
 
 Then you create an Invoice object and fill it with the information of the item, product or service you are selling, and customer information.
 
@@ -39,7 +39,7 @@ BTCpay client has dependencies listed below. You should have those managed dll i
 
 ### BTCPayClient class
 `new BTCPayClient(String paringCode, String BTCPayServerHost)`  
-BTCPayClient class has a constructor.  
+BTCPayClient class has a constructor.  pass the paring code and BTCpay server host.
 
 `Invoice createInvoice(Invoice invoice, String facade)`  
 Submit and register an Invoice to BTCPay server. Response is an Invoice filled with Payment destination information. e.g. BOLT invoice String.
@@ -87,9 +87,9 @@ public class BTCPayUnity : MonoBehaviour {
 
     void Start()
     {
-        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードをセット
+        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードとホスト名をセット
         //秘密鍵ファイルがワーキングディレクトリに作成され、公開鍵がBTCPayServerに登録される。
-        btcPayClient = new BTCPayClient(pairCode);
+        btcPayClient = new BTCPayClient(pairCode, "btcpaytest2.indiesquare.net");
     }
 
     public void createInvoice()
