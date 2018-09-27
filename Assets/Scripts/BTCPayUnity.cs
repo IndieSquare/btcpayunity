@@ -12,6 +12,7 @@ using ZXing.QrCode;
 public class BTCPayUnity : MonoBehaviour {
 
     public string pairCode;
+    public string hostUrl;
     public string email;
 
     public Text product;
@@ -25,7 +26,7 @@ public class BTCPayUnity : MonoBehaviour {
     {
         //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードをセット
         //秘密鍵ファイルがワーキングディレクトリに作成され、公開鍵がBTCPayServerに登録される。
-        btcPayClient = new BTCPayClient(pairCode);
+        btcPayClient = new BTCPayClient(pairCode,hostUrl);
     }
 
     public void createInvoice()
