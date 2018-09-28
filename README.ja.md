@@ -17,12 +17,17 @@ Read this in other languages: [English](README.md), [日本語](README.ja.md)
 
 ## 依存ライブラリー
 BTCpayクライアントは、以下ライブラリーに依存していますので、dllが必要です。
+もしくは、BTCpay クライアントの unityパッケージをインポートすることも可能です。
 
 * BitCoinSharp
 * BouncyCastle.Crypto
 * Newtonsoft.Json
 * websocket-sharp
 * zxing.unity
+
+## .net のバージョン
+Unityの設定で、donetのバージョンを４に変更する必要があります。
+`File->Build Settings->Configuration->Scripting Runtime Version-> .Net 4.x` 
 
 ## ペアリングコードの作成方法
 1. BTCPayサーバーに管理者でログインする。

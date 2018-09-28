@@ -25,6 +25,12 @@ BTCpay client has dependencies listed below. You should have those managed dll i
 * websocket-sharp
 * zxing.unity
 
+or just use the importable unity package found in releases
+
+## .net version
+In unity you may need to set the project settings to use .net version 4
+`File->Build Settings->Configuration->Scripting Runtime Version-> .Net 4.x` 
+
 ## How to generate paring code.
 1. Login to BTCPay server as admin role.
 2. Go to Store=>Access Token=>Create a new token. without Public key.
