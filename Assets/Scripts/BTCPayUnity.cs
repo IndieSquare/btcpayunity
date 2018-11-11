@@ -69,6 +69,7 @@ public class BTCPayUnity : MonoBehaviour {
         if (invoice.Status == "complete")
         {
             //インボイスのステータスがcompleteであれば、全額が支払われた状態なので、支払完了のイメージに変更する
+            //Change the image from QR to Paid
             QRcode.GetComponent<Image>().sprite = Resources.Load<Sprite>("image/paid");
             //1 sec Delay to keep paid image/支払済みイメージを1秒間表示
             await Task.Delay(1000);
