@@ -22,7 +22,6 @@ BTCpayクライアントは、以下ライブラリーに依存しています�
 * BitCoinSharp
 * BouncyCastle.Crypto
 * Newtonsoft.Json
-* websocket-sharp
 * zxing.unity
 
 ## .net のバージョン
@@ -31,7 +30,7 @@ Unityの設定で、donetのバージョンを４に変更する必要があり�
 
 ## ペアリングコードの作成方法
 1. BTCPayサーバーに管理者でログインする。
-2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。
+2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。Facadeはposにします。
 3. ポップアップに ペアリングコードが、一時的にでるので、コピーしてコードで使用します。
 
 ## デフォルトのlndをBTCPay serverに接続する
@@ -46,11 +45,10 @@ Unityの設定で、donetのバージョンを４に変更する必要があり�
 コンストラクター。引数にペアリングコードとBTCPAYサーバーのホストを渡します。
 
 `Invoice createInvoice(Invoice invoice, String facade)`  
-InvoiceオブジェクトをBTCPayサーバーに送信し、登録します。リスポンスとして、支払先情報等がアップデートされたInvoiceオブジェクトがもどります。たとえば、BOLTインボイス文字列が取得できます。
+InvoiceオブジェクトをBTCPayサーバーに送信し、登録します。配布先で秘密鍵ファイルが見れてしまうので、Facadeの権限は、Invoice作成に制限された"pos"にします。リスポンスとして、支払先情報等がアップデートされたInvoiceオブジェクトがもどります。たとえば、BOLTインボイス文字列が取得できます。
 
-`void subscribeInvoice(String invoiceId, Action<Invoice> callbackWithInvoice,GameObject gameObject)`  
-Invoiceを引数にとれるコールバック関数を、モニターするInvoiceのIDを渡し、コールーチンで実行します。
-３つめの引数は、Scriptを、貼り付けるUnityのゲームおジェクトを渡します。
+`await subscribeInvoice(String invoiceId,  Func<Invoice, Task> actionOnInvoice)`  
+Invoiceを引数にとれるコールバック関数を、モニターするInvoiceのIDを渡し、awaitで実行します。
 
 ### Invoice クラス
 
@@ -127,24 +125,27 @@ public class BTCPayUnity : MonoBehaviour {
         QRcode.GetComponent<Image>().sprite = Sprite.Create(texs, new Rect(0.0f, 0.0f, texs.width, texs.height), new Vector2(0.5f, 0.5f), 100.0f);
 
         //5.Subscribe the callback method with invoice ID to be monitored
-        //5.支払がされたら実行されるコールバックを引き渡して、コールーチンで実行する
-        StartCoroutine(btcPayClient.subscribeInvoice(invoice.Id, printInvoice,this));
+        //5.支払がされたら実行されるasync コールバックを引き渡して、await で実行する
+        await btcPayClient.subscribeInvoiceAsync(invoice.Id, printInvoice);
     }
 
     //Callback method when payment is executed.
     //支払実行時に、呼び出されるコールバック 関数（最新のインボイスオブジェクトが渡される）
-    public void printInvoice(Invoice invoice)
+    public async Task printInvoice(Invoice invoice)
     {
         //Hide QR code image to Paied Image file
         //ステータス 一覧はこちら。 https://bitpay.com/docs/invoice-states
         if (invoice.Status == "complete")
         {
             //インボイスのステータスがcompleteであれば、全額が支払われた状態なので、支払完了のイメージに変更する
+            //Change the image from QR to Paid
             QRcode.GetComponent<Image>().sprite = Resources.Load<Sprite>("image/paid");
+            //1 sec Delay to keep paid image/支払済みイメージを1秒間表示
+            await Task.Delay(1000);            
             Debug.Log("payment is complete");
         }else
         {
-            //StartCoroutine(btcPayClient.subscribeInvoice(invoice.Id, printInvoice, this));
+            //Do something if not full payment
             //全額支払いでない場合には、なにか処理をおこなう。以下は、ただ　ステータスを表示して終了。
             Debug.Log("payment is not completed:" + invoice.Status);
         }
