@@ -140,7 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e8c6c89b564fa47a6b3b860a235f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pairCode: gyqpYTu
+  pairCode: m2eWNfu
+  btcpayServerHost: btcpaytest.indiesquare.net
   email: m_nakane@gmail.com
   product: {fileID: 1146894471}
   cmbCurrency: {fileID: 1414812455}
