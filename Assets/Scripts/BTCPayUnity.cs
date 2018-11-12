@@ -34,13 +34,12 @@ public class BTCPayUnity : MonoBehaviour {
         invoice.BuyerEmail = email;
         invoice.FullNotifications = true;
         invoice.NotificationEmail = email;
-        invoice.PosData = "POST DATA POS DATA";
+        invoice.PosData = "TEST POS DATA";
         invoice.ItemDesc = product.text;//購入アイテムの名称
 
         //2.Create Invoice with initial data and get the full invoice
         //2.BTCPayServerにインボイスデータをサブミットして、インボイスの詳細データを取得する。
-        invoice = btcPayClient.createInvoice(invoice, "pos");
-        //        invoice = btcPayClient.createInvoice(invoice, "merchant");
+        invoice = btcPayClient.createInvoice(invoice);
 
         Debug.Log("Invoice Created:" + invoice.Id);
         Debug.Log("Invoice Url:" + invoice.Url);
