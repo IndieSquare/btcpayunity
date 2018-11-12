@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 public class BTCPayUnity : MonoBehaviour {
 
-    public string pairCode;
-    public string btcpayServerHost;
-    public string email;
+    public string pairCode;//set pairing code from inspector
+    public string btcpayServerHost;//set host from inspector
+    public string email;//Optional
 
     public Text product;
     public Dropdown cmbCurrency;
@@ -19,8 +19,11 @@ public class BTCPayUnity : MonoBehaviour {
 
     void Start()
     {
-        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードをセット
-        //秘密鍵ファイルがワーキングディレクトリに作成され、公開鍵がBTCPayServerに登録される。
+        //Instantiate the BTCPayClient Object with server-initiated pairing code and hostname of BTCpay server
+        //Once instantiated, it will generate a new private key if not there, and SIN ,which is derived from public key.
+        //then registered on BTCPay server
+        //BTCpayCleintをインスタンス化する。BTCPayServerで取得したペアリングコードをとホスト名をセット
+        //秘密鍵ファイルがワーキングディレクトリに作成され、公開鍵から作られたBitcoinアドレスのようなSINがBTCPayServerに登録される。
         btcPayClient = new BTCPayClient(pairCode, btcpayServerHost);
     }
 
@@ -45,7 +48,7 @@ public class BTCPayUnity : MonoBehaviour {
         Debug.Log("Invoice Url:" + invoice.Url);
 
         //3.Lightning BOLT invoice string
-        //3.Lightning BOLTデータは以下のプロパティから取得する。
+        //3.Lightning BOLT invoice データは以下のプロパティから取得する。
         List<InvoiceCryptoInfo> cryptoInfoList = invoice.CryptoInfo;
         Texture2D texs = btcPayClient.generateQR(cryptoInfoList[0].paymentUrls.BOLT11);//Generate QR code image
 
@@ -53,7 +56,7 @@ public class BTCPayUnity : MonoBehaviour {
         //4.取得したBOLTからQRコードを作成し、ウオレットでスキャンするために表示する。
         QRcode.GetComponent<Image>().sprite = Sprite.Create(texs, new Rect(0.0f, 0.0f, texs.width, texs.height), new Vector2(0.5f, 0.5f), 100.0f);
 
-        //5.Subscribe the callback method with invoice ID to be monitored
+        //5.Subscribe the an callback method with invoice ID to be monitored
         //5.支払がされたら実行されるasync コールバックを引き渡して、await で実行する
         await btcPayClient.subscribeInvoiceAsync(invoice.Id, printInvoice);
 
