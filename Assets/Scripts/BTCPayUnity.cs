@@ -38,32 +38,19 @@ public class BTCPayUnity : MonoBehaviour {
         invoice.BuyerEmail = email;
         invoice.FullNotifications = true;
         invoice.NotificationEmail = email;
-        invoice.PosData = "TEST POS DATA";
         invoice.ItemDesc = product.text;//購入アイテムの名称
-        invoice.Id ="123";
 
-        Debug.Log("createInvoice(): BEFORE NULLCHECK");
-
-        Debug.Log("createInvoice(): initial Invoice isNull?:" + (invoice==null));
-        Debug.Log("createInvoice(): initial Invoice:" + invoice.ToString());
         string json = JsonConvert.SerializeObject(invoice);
-        Debug.Log("createInvoice(): serialized json:" + json);
         JObject jo = JObject.Parse(json);
-        Debug.Log("createInvoice(): price:" + jo["price"]);
-        Debug.Log("createInvoice(): id:" + jo["id"]);
 
         //2.Create Invoice with initial data and get the full invoice
         //2.BTCPayServerにインボイスデータをサブミットして、インボイスの詳細データを取得する。
-        Debug.Log("createInvoice(): btcPayClient is null?:"+ (btcPayClient == null));
         StartCoroutine(btcPayClient.createInvoice(invoice ,handleInvoice));
 
     }
 
     private void handleInvoice(Invoice invoice)
     {
-        Debug.Log("handleInvoice(): Invoice Created:" + invoice.Id);
-        Debug.Log("handleInvoice(): Invoice Url:" + invoice.Url);
-
         //3.Lightning BOLT invoice string
         //3.Lightning BOLT invoice データは以下のプロパティから取得する。
         List<InvoiceCryptoInfo> cryptoInfoList = invoice.CryptoInfo;
