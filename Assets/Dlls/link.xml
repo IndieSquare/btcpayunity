@@ -7,5 +7,6 @@
   -->
   <assembly fullname="BtcPayClient" preserve="all"/>
   <assembly fullname="WebSocketUnity" preserve="all"/>
-
+  <assembly fullname="DataAccessUnity" preserve="all"/>
+  <assembly fullname="NBitcoin" preserve="all"/>
 </linker>
