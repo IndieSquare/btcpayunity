@@ -18,19 +18,15 @@ Read this in other languages: [English](README.md), [日本語](README.ja.md)
 
 ## 依存ライブラリー
 BTCpayクライアントは、以下ライブラリーに依存していますので、dllが必要です。
-もしくは、BTCpay クライアントの unityパッケージをインポートすることでバージョンの心配が不要です。
+もしくは、BTCpay クライアントの リリースページにある unityパッケージをインポートすることでバージョンの心配が不要です。
 
-* Newtonsoft.Json 
-* NBitcoin エリプティックカーブを使った鍵の生成や署名
 * BouncyCastle.Crypto NBitcoinの依存先
+* NBitcoin エリプティックカーブを使った鍵の生成や署名
 * websocket-sharp WEBGL以外用のWEBSOCKETライブラリー
 * log4net
 * zxing.unity QR コード生成
-
-## 依存アセット
-Json for Unity が必要です。
-https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347
-
+* Multiformats.Base  エンコーディング
+* JsonDotNet   jsonの処理
 
 ## .net のバージョン
 Unityの設定で、donetのバージョンを４に変更する必要があります。
@@ -38,13 +34,17 @@ Unityの設定で、donetのバージョンを４に変更する必要があり�
 
 ## ペアリングコードの作成方法
 1. BTCPayサーバーに管理者でログインする。
-2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。Facadeはposにします。
+2. 次の順番で、アクセストークンを作成します。 Store=>Access Token=>Create a new token. ただし、公開鍵は、空白にします。Facadeは必ずposにします。
 3. ポップアップに ペアリングコードが、一時的にでるので、コピーしてコードで使用します。
+（ストアのWalletの設定は必須です。）
 
 ## デフォルトのlndをBTCPay serverに接続する
 1. BTCPayサーバーに管理者でログインする。
 2. 次の順番で、設定ページに移動します。Stores=>Settings=>General Settings=>Lightning nodes=>Modify
 3. Connecting string のところの "click here"をクリックし、接続のテストをして、設定を登録します。
+
+## 秘密鍵の生成について
+このUnityプロジェクトを初めて実行すると、設定したペアリングコードにマップされる秘密鍵が生成されます。(Assets/Resources/poskey.txt)。たまに、Unityがこのファイルの生成にきづかないので、フォルダをリフレッシュしてUnityEditorからこのファイルが見えることを確認します。  ビルドすると、実行ファイルやWasmに、組み込まれるので、全プレーヤーで共通の秘密鍵が使用されます。新しい秘密鍵を使用したいときは、ファイルをUnityから消せばSDKが新しい秘密鍵を生成しますが前のは期限切れなので、新しいペアリングコードが必要です。
 
 ## クラスとメソッド
 
@@ -52,11 +52,8 @@ Unityの設定で、donetのバージョンを４に変更する必要があり�
 `new BTCPayClient(String paringCode, String BTCPayServerHost)`  
 コンストラクター。引数にペアリングコードとBTCPAYサーバーのホストを渡します。
 
-`Invoice createInvoice(Invoice invoice)`  
-InvoiceオブジェクトをBTCPayサーバーに送信し、登録します。配布先で秘密鍵ファイルが見れてしまうので、Facadeの権限は、デフォルトの値のInvoice作成に制限された"pos"になります。リスポンスとして、支払先情報等がアップデートされたInvoiceオブジェクトがもどります。BOLTインボイス文字列が取得できます。
-
-`await subscribeInvoice(String invoiceId,  Func<Invoice, Task> actionOnInvoice)`  
-Invoiceを引数にとれるasyncコールバック関数を、モニターするInvoiceのIDを渡し、awaitで実行します。
+`IEnumerator createInvoice(Invoice invoice,Action<Invoice> invoiceAction)`  
+コールーチンで非同期に実行します。InvoiceオブジェクトをBTCPayサーバー送りつつ、Invoiceを引数にとれるコールバック関数を、渡して、リスポンスでもどってきたInvoiceオブジェクトの処理をできるようにします。配布バイナリに秘密鍵ファイルが含まれるので、Facadeの権限は、デフォルトの値のInvoice作成に制限された"pos"になります。
 
 ### Invoice クラス
 

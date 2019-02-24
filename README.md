@@ -13,24 +13,21 @@ First, you instantiate BTCPayClient class,by passing paring code from BTCPay ser
 
 Then you create an Invoice object and fill it with the information of the item, product or service you are selling, and customer information if required.
 
-Then, submit the invoice to BTCPay server. In turn , it responses back an Invoice object filled with invoiceID, status, payment destination information(e.g. Bitcoin address/BOLT11 invoice string). Then show the QR code from those addresses.
+Then, submit the invoice to BTCPay server. In turn , it responses back an Invoice object filled with invoiceID, status, payment destination information(e.g. Bitcoin address/BOLT11 invoice string). Then you can show the QR code for those addresses with which player can pay by bitcoin or lightning.
 
 Then, you can subscribe to the invoice by passing callback function to do whatever you want to do when payment is complete.
 
 ## DLL Dependency
 BTCpay client has dependencies listed below. You should have those managed dll in hand.
 * BouncyCastle.Crypto for ecptic curve key processing
-* Newtonsoft.Json 
 * NBitcoin for ecptic curve key processing
 * websocket-sharp for websocket for non-webGL
 * log4net
 * zxing.unity for QR code generation
+* Multiformats.Base  for some encoding
+* JsonDotNet   json processing
 
 or just use the importable unity package found in releases
-
-## Asset Store Dependency
-Json for Unity is required. Download from 
-https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347
 
 ## .net version
 In unity you may need to set the project settings to use .net version 4
@@ -38,14 +35,17 @@ In unity you may need to set the project settings to use .net version 4
 
 ## How to generate server-initiated paring code
 1. Login to BTCPay server as admin role.
-2. Go to Store=>Access Token=>Create a new token. without Public key.Set facade as pos
+2. Go to Store=>Access Token=>Create a new token. without Public key.Set facade as pos (Don't use Marchant facade!!)
 3. Copy the server-initiated paring code from popup
-Don't forget the setting for store wallet on BTCPAY server.
+(Don't forget the setting for store wallet.)
 
 ## Default lnd daemon with BTCPay Server
 1. Login to BTCPay Server as admin role.
 2. Go to Stores=>Settings=>General Settings=>Lightning nodes=>Modify
 3. at Connecting string Click "click here",test and Submit
+
+## private key
+When you start the game in Unity Editor for the first time, it creates private key as Assets/Resources/poskey.txt. And it is loaded as an Asset.You may need to refresh the project folder after it is created because unity sometimes doesnot pick up the file created. Once it is created/recognized, it keep using this private key mapped with the paring code. If you want to use new key, you just remove the file from Unity editor. The SDK will try to create new one with a new paring code.
 
 ## Classes and Methods
 
@@ -53,17 +53,14 @@ Don't forget the setting for store wallet on BTCPAY server.
 `new BTCPayClient(String paringCode, String BTCPayServerHost)`  
 BTCPayClient class has a constructor.  pass the paring code and BTCpay server host.
 
-`Invoice createInvoice(Invoice invoice)`  
-Submit and register an Invoice to BTCPay server. Response is an Invoice filled with Payment destination information. e.g. BOLT invoice String.It uses the limited facade "pos" as default because the private key for this API connection is exposed to game player.
-
-`await subscribeInvoice(String invoiceId,  Func<Invoice, Task> actionOnInvoice)`  
-Subscribe to an invoice with callback async method that takes Invoice as a parameter.
+`IEnumerator createInvoice(Invoice invoice,Action<Invoice> invoiceAction)`  
+Run with Coroutine by passing a new partialy filled Invoice to BTCPay server.  Callback should be passed and it processes the Invoice returned, which is filled with Payment destination information. e.g. BOLT invoice String.It uses the limited facade "pos" as default because the private key for this API connection is exposed to players with the game.
 
 ### Invoice class
 
 ` new Invoice(double price,String currency)`  
 
-Additionally, you can set several properties.  
+Additionally, you can set several more properties.  
 https://bitpay.com/docs/create-invoice
 
 invoice.BuyerEmail = jon.doe@g.com  
