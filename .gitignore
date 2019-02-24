@@ -39,3 +39,6 @@ sysinfo.txt
 bitpay_private.key
 btcpay_private.key
 WebGLBuild/
+Build5/
+Assets/Resources/poskey.txt.meta
+Assets/Resources/poskey.txt
